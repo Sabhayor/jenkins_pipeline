@@ -200,7 +200,7 @@ v.  Execute the file\
 ``` bash
 ./docker.sh
 ```
-
+    
 We have successfully installed docker.
 
 **Writting Dockerfile Script**\
@@ -230,3 +230,57 @@ Congratulations, You have successfully run your first pipeline code.
 
 Pushing these files dockerfile and index.html will trigger jenkins to
 automatically run new build for our pipeline
+
+To access the content of index.html on our web browser, you need to first edit inbound rules and open the port we mapped our container to (8081)
+
+![Web page](/images/html_page.png)
+
+
+### Error encountered and resolution
+Docker pernission error: The Jenkins user running the pipeline does not have permission to access Docker.  
+
+![Pipeline error](/images/pipeline_error.png)
+
+**Step 1: Check Docker Daemon Status**  
+
+Ensure Docker service is running:  
+
+``` bash
+sudo systemctl status docker  
+````
+If not active, start it:  
+
+```
+sudo systemctl start docker  
+````
+```
+sudo systemctl enable docker
+````
+
+**Step 2: Give Jenkins User Docker Permissions**  
+By default, only root can run Docker. You need to add the jenkins user to the docker group.
+
+Add Jenkins to Docker group:  
+```
+sudo usermod -aG docker jenkins  
+```
+
+Restart Jenkins so changes apply: 
+``` 
+sudo systemctl restart jenkins
+```
+**Step 3: Test Jenkins User Docker Access**  
+Switch to Jenkins user:  
+```
+sudo su - jenkins  
+docker ps 
+``` 
+![Pipeline success](/images/pipeline_success.png)
+
+![Pipeline success](/images/pipeline_success_status.png)
+
+![Pipeline success](/images/pipeline_overview.png)
+
+
+
+
